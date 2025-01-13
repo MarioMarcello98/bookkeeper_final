@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import org.apache.bookkeeper.conf.ServerConfiguration;
 import org.apache.bookkeeper.stats.NullStatsLogger;
-import org.apache.bookkeeper.test.TestStatsProvider;
 import org.junit.Test;
 
 /**

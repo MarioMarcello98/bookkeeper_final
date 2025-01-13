@@ -19,8 +19,7 @@
 package org.apache.distributedlog.fs;
 
 import java.net.URI;
-import org.apache.distributedlog.DLMTestUtil;
-import org.apache.distributedlog.TestDistributedLogBase;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.junit.AfterClass;

@@ -24,9 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import org.apache.bookkeeper.bookie.BookieImpl;
-import org.apache.bookkeeper.bookie.TestBookieImpl;
 import org.apache.bookkeeper.bookie.storage.directentrylogger.DirectEntryLogger;
-import org.apache.bookkeeper.conf.TestBKConfiguration;
 import org.junit.Before;
 
 /**

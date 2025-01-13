@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.bookkeeper.http.HttpServer;
 import org.apache.bookkeeper.http.service.HttpServiceRequest;
 import org.apache.bookkeeper.http.service.HttpServiceResponse;
-import org.apache.bookkeeper.test.BookKeeperClusterTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
