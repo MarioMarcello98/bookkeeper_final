@@ -1462,7 +1462,7 @@
 
     <!-- JaCoCo profile -->
     <profile>
-      <id>JaCoCo-Coverage</id>
+      <id>JaCoCo-coverage</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
