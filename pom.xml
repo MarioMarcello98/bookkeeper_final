@@ -948,7 +948,6 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
           <configuration>
-            <excludedGroups>flaky</excludedGroups>
               <systemPropertyVariables>
                 <jacoco-agent.destfile>**/jacoco.exec</jacoco-agent.destfile>
               </systemPropertyVariables>
