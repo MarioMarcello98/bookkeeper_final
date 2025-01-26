@@ -169,8 +169,9 @@
       <artifactId>log4j-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j2-impl</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.30</version>
     </dependency>
     <dependency>
       <groupId>com.lmax</groupId>
@@ -246,6 +247,19 @@
       <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
+
+
+
+    <!-- PIT -->
+    <dependency>
+      <groupId>org.pitest</groupId>
+      <artifactId>pitest-maven</artifactId>
+      <version>1.14.0</version>
+      <type>maven-plugin</type>
+    </dependency>
+
+
+
   </dependencies>
   <build>
     <plugins>
@@ -386,8 +400,9 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
-      <id>Ba-Dua</id>
+      <id>ba-dua</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
@@ -450,9 +465,8 @@
                 </configuration>
               </execution>
             </executions>
-
-
           </plugin>
+
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -461,5 +475,56 @@
         </plugins>
       </build>
     </profile>
+
+
+    <!-- pit -->
+    <profile>
+      <id>pit</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <withHistory>true</withHistory>
+        <pitest.history.file>${project.build.directory}/pitest.history</pitest.history.file>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <version>1.14.0</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-junit5-plugin</artifactId>
+                <version>1.2.0</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <targetClasses>
+                <param>org.apache.bookkeeper.LifecycleTest</param>
+              </targetClasses>
+
+              <avoidCallsTo>
+                <avoidCallsTo>org.slf4j</avoidCallsTo>
+              </avoidCallsTo>
+              <historyInputFile>${pitest.history.file}</historyInputFile>
+              <historyOutputFile>${pitest.history.file}</historyOutputFile>
+            </configuration>
+            <executions>
+              <execution>
+                <id>pit report</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>mutationCoverage</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+
   </profiles>
 </project>
