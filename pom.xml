@@ -74,6 +74,7 @@
     <module>tests</module>
     <module>native-io</module>
     <module>testtools</module>
+    <module>isw2_jacoco</module>
   </modules>
   <mailingLists>
     <mailingList>
