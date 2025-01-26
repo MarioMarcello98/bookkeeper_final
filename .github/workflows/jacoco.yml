@@ -39,4 +39,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: JaCoCoReport
-          path: isw2-jacoco/target/site/jacoco-aggregate/
+          path: isw2_jacoco/target/site/jacoco-aggregate/
