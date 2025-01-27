@@ -342,6 +342,14 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.11</version>
+      </plugin>
+
+
     </plugins>
   </build>
   <profiles>
@@ -401,6 +409,7 @@
       </build>
     </profile>
 
+    <!-- ba-dua -->
     <profile>
       <id>ba-dua</id>
       <activation>
@@ -466,15 +475,13 @@
               </execution>
             </executions>
           </plugin>
-
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.11</version>
-          </plugin>
         </plugins>
       </build>
     </profile>
+
+
+
+
 
 
     <!-- pit -->
