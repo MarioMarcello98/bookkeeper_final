@@ -227,12 +227,7 @@
         <version>${spotbugs-annotations.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>br.usp.each.saeg</groupId>
-        <artifactId>ba-dua</artifactId>
-        <version>0.8.0</version>
-        <type>pom</type>
-      </dependency>
+
 
       <dependency>
         <groupId>javax.annotation</groupId>
@@ -964,7 +959,8 @@
                 <goal>verify</goal>
               </goals>
             </execution>
-          </executions>          </plugin>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>com.github.maven-nar</groupId>
           <artifactId>nar-maven-plugin</artifactId>

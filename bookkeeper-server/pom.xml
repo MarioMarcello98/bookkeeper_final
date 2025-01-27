@@ -409,15 +409,17 @@
       </build>
     </profile>
 
-    <!-- ba-dua -->
     <profile>
-      <id>ba-dua</id>
+      <id>BaDua-Coverage</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <argLine>-javaagent:target/dependency/ba-dua-agent-rt-${ba-dua.version}-all.jar -Doutput.file=${project.build.directory}/badua.ser</argLine>
+        <!-- Use a stable version instead of SNAPSHOT one -->
+        <ba-dua.version>0.6.0</ba-dua.version>
+        <argLine>-javaagent:target/dependency/ba-dua-agent-rt-${ba-dua.version}-all.jar -Doutput.file=target/badua.ser</argLine>
       </properties>
+      <!-- Needed for generate the report -->
       <dependencies>
         <dependency>
           <groupId>br.usp.each.saeg</groupId>
@@ -427,6 +429,7 @@
       </dependencies>
       <build>
         <plugins>
+          <!-- Copy ba-dua-agent-rt from .m2 directory to target/dependency -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
@@ -449,6 +452,7 @@
               </execution>
             </executions>
           </plugin>
+          <!-- Generate report in xml format -->
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
@@ -478,6 +482,7 @@
         </plugins>
       </build>
     </profile>
+
 
 
 
