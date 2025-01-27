@@ -215,12 +215,12 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <!-- needed by ZooKeeper server tests utilities -->
+    <!--dependency>
+      < needed by ZooKeeper server tests utilities
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>org.apache.bookkeeper.stats</groupId>
       <artifactId>prometheus-metrics-provider</artifactId>
@@ -509,7 +509,6 @@
             </dependencies>
             <configuration>
               <targetClasses>
-                <param>org.apache.bookkeeper.LifecycleTest</param>
               </targetClasses>
 
               <avoidCallsTo>
