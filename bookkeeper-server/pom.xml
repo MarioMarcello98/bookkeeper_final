@@ -319,6 +319,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin.version}</version>
         <configuration>
           <sourcepath>${src.dir}</sourcepath>
           <!-- Avoid for missing javadoc comments to be marked as errors -->
@@ -414,11 +415,10 @@
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-      <properties>
-        <!-- Use a stable version instead of SNAPSHOT one -->
+      <!--properties>
         <ba-dua.version>0.6.0</ba-dua.version>
         <argLine>-javaagent:target/dependency/ba-dua-agent-rt-${ba-dua.version}-all.jar -Doutput.file=target/badua.ser</argLine>
-      </properties>
+      </properties>-->
       <!-- Needed for generate the report -->
       <dependencies>
         <dependency>
@@ -451,6 +451,17 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+          <!-- Execute tests -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>
+                -javaagent:target/dependency/ba-dua-agent-rt-0.6.0-all.jar
+                -Doutput.file=target/badua.ser
+              </argLine>
+            </configuration>
           </plugin>
           <!-- Generate report in xml format -->
           <plugin>
