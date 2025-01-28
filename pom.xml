@@ -1418,9 +1418,10 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.12.1</version>
               <configuration>
-                <!-- for some reason, setting maven.compiler.release property alone doesn't work -->
-                <release>${maven.compiler.release}</release>
+                <source>16</source>
+                <target>16</target>
               </configuration>
             </plugin>
             <plugin>
