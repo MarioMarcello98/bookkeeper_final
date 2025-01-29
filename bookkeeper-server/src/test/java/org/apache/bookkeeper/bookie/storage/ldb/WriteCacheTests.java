@@ -4,20 +4,26 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
+import io.netty.buffer.UnpooledByteBufAllocator;
+import org.apache.bookkeeper.metastore.MSException;
 import org.junit.*;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
+
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.Collection;
 
 @RunWith(value = Enclosed.class)
 public class WriteCacheTests {
     protected static WriteCache writeCache;
     //CACHE CONFIGURATION PARAMETERS
-    private static final int ENTRY_SIZE = 1024;
-    private static final int MAX_ENTRIES = 10;
-    private static final int CACHE_SIZE = ENTRY_SIZE * MAX_ENTRIES;
-    private static final int MAX_SEGMENT_SIZE = 1024 * 1024 * 1024;
+
+    private static final int CACHE_SIZE = 1024;
+
 
 
     @RunWith(Parameterized.class)
@@ -29,12 +35,12 @@ public class WriteCacheTests {
         private long entryId;
         private ByteBuf byteBuffer;
         private boolean expectedResult;
-        private final boolean expectedException;
+        private Class<? extends Exception>  expectedException;
 
         @Before
         public void setupCache() {
             //faccio il setup della cache prima di eseguire tutti i test
-            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE, MAX_SEGMENT_SIZE);
+            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
         }
 
         @After
@@ -50,16 +56,18 @@ public class WriteCacheTests {
 
             return Arrays.asList(new Object[][]{
                     //Unidimensional approach, I put in each test suite an invalid value
-                    //LEDGER_ID         ENTRY_ID       ENTRY                                                EXPECTED_EXCEPTION          EXPECTED_RESULT
-                    {-1L, 1L, Unpooled.wrappedBuffer(new byte[1]), true, false},
-                    {1L, 1L, Unpooled.wrappedBuffer(new byte[2 * CACHE_SIZE]), false, false},
-                    {1L, -1L, Unpooled.wrappedBuffer(new byte[1]), true, false},
-                    {1L, 1L, Unpooled.wrappedBuffer(new byte[1]), false, true},
-
+                    //LEDGER_ID         ENTRY_ID       ENTRY                                                EXPECTED_EXCEPTION                                      EXPECTED_RESULT
+                    {-1L, 1L, Unpooled.wrappedBuffer(new byte[1]),                                          IllegalArgumentException.class,                       false},
+                    {1L, 1L, Unpooled.wrappedBuffer(new byte[2 * CACHE_SIZE]),                              null,                                                   false},
+                    {1L, -1L, Unpooled.wrappedBuffer(new byte[1]),                                          IllegalArgumentException.class,                       false},
+                    {1L, 1L, Unpooled.wrappedBuffer(new byte[1]),                                           null,                                                   true},
+                    {1L,1L,Unpooled.wrappedBuffer(new byte[CACHE_SIZE]),                                    null,                                                   true},
+                    {1L, 0L, Unpooled.wrappedBuffer(new byte[1]),                                           null,                                                   true},
+                    {0L, 1L, Unpooled.wrappedBuffer(new byte[1]),                                           null,                                                   true},
             });
         }
 
-        public putTest(long ledgerId, long entryId, ByteBuf byteBuffer, boolean expectedExc, boolean expectedRes) {
+        public putTest(long ledgerId, long entryId, ByteBuf byteBuffer,  Class<? extends Exception> expectedExc, boolean expectedRes) {
             this.ledgerId = ledgerId;
             this.entryId = entryId;
             this.byteBuffer = byteBuffer;
@@ -74,7 +82,7 @@ public class WriteCacheTests {
             try {
                 Assert.assertEquals(this.expectedResult, writeCache.put(this.ledgerId, this.entryId, this.byteBuffer));
             } catch (IllegalArgumentException e) {
-                Assert.assertTrue(expectedException);
+                Assert.assertEquals(expectedException,e.getClass() );
             }
 
 
@@ -87,13 +95,13 @@ public class WriteCacheTests {
     public static class getTest {
         long ledgerId;
         long entryId;
-        boolean expException;
+        private Class<? extends Exception>  expException;
         ByteBuf expectedResult;
 
         @BeforeClass
         public static void setupCache() {
             //faccio il setup della cache prima di eseguire tutti i test
-            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE, MAX_SEGMENT_SIZE);
+            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
         }
 
@@ -110,15 +118,17 @@ public class WriteCacheTests {
 
             return Arrays.asList(new Object[][]{
                     //Unidimensional approach, I put in each test suite an invalid value
-                    //LEDGER_ID         ENTRY_ID            EXPECTED_EXCEPTION          EXPECTED_RESULT
-                    {-1L, 1L, true, null},
-                    {1L, -1L, true, null},
-                    {1L, 1L, false, Unpooled.wrappedBuffer(new byte[1])},
+                    //LEDGER_ID         ENTRY_ID            EXPECTED_EXCEPTION                      EXPECTED_RESULT
+                    {-1L,               1L,                 IllegalArgumentException.class,         null},
+                    {1L,                -1L,                IllegalArgumentException.class,                                   null},
+                    {1L,                1L,                 null,                                  Unpooled.wrappedBuffer(new byte[1])},
+                    {0L,                0L,                 null,                                 null},
+
 
             });
         }
 
-        public getTest(long ledgerId, long entry, boolean expExc, ByteBuf expRes) {
+        public getTest(long ledgerId, long entry,Class<? extends Exception>  expExc, ByteBuf expRes) {
             this.ledgerId = ledgerId;
             this.entryId = entry;
             this.expectedResult = expRes;
@@ -131,7 +141,7 @@ public class WriteCacheTests {
             try {
                 Assert.assertEquals(expectedResult, writeCache.get(this.ledgerId, this.entryId));
             } catch (IllegalArgumentException e) {
-                Assert.assertTrue(this.expException);
+                Assert.assertEquals(this.expException,e.getClass());
             }
         }
 
@@ -140,7 +150,7 @@ public class WriteCacheTests {
 
     @RunWith(Parameterized.class)
     public static class hasEntryTest {
-        private final boolean expectedException;
+        private Class<? extends Exception>  expectedException;
         long ledgerId;
         long entryId;
         boolean expectedResult;
@@ -148,7 +158,7 @@ public class WriteCacheTests {
         @BeforeClass
         public static void setupCache() {
             //faccio il setup della cache prima di eseguire tutti i test
-            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE, MAX_SEGMENT_SIZE);
+            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
         }
 
@@ -166,15 +176,15 @@ public class WriteCacheTests {
             return Arrays.asList(new Object[][]{
                     //Unidimensional approach, I put in each test suite an invalid value
                     //LEDGER_ID         ENTRY_ID                   EXPECTED_RESULT      EXPECTED_EXCEPTION
-                    {-1L,                1L,                       false,                true},
-                    {1L,                -1L,                       false,                true},
-                    {1L,                1L,                        true,                  false},
-                    {0L,                1L,                        false,                   false}
+                    {-1L,                1L,                       false,                IllegalArgumentException.class},
+                    {1L,                -1L,                       false,                IllegalArgumentException.class},
+                    {1L,                1L,                        true,                 null},
+                    {0L,                0L,                        false,                null}
 
             });
         }
 
-        public hasEntryTest(long ledgerId, long entry, boolean expRes, boolean expExc) {
+        public hasEntryTest(long ledgerId, long entry, boolean expRes,  Class<? extends Exception>  expExc) {
             this.ledgerId = ledgerId;
             this.entryId = entry;
             this.expectedResult = expRes;
@@ -188,7 +198,7 @@ public class WriteCacheTests {
 
                 Assert.assertEquals(expectedResult, writeCache.hasEntry(this.ledgerId, this.entryId));}
             catch(IllegalArgumentException e){
-                Assert.assertTrue(this.expectedException);
+                Assert.assertEquals(this.expectedException, e.getClass());
             }
         }
 
@@ -199,12 +209,12 @@ public class WriteCacheTests {
     public static class getLastEntryTest {
         long ledgerId;
         ByteBuf expectedResult;
-        private boolean expectedException;
+        private Class<? extends Exception>  expectedException;
 
         @BeforeClass
         public static void setupCache() {
             //faccio il setup della cache prima di eseguire tutti i test
-            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE, MAX_SEGMENT_SIZE);
+            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
         }
 
@@ -222,14 +232,14 @@ public class WriteCacheTests {
             return Arrays.asList(new Object[][]{
                     //Unidimensional approach, I put in each test suite an invalid value
                     //LEDGER_ID             EXPECTED_RESULT                         EXPECTED_EXCEPTION
-                    {-1L,                   null,                                    true},
-                    {1L,                    Unpooled.wrappedBuffer(new byte[1])    ,false},
-                    {0L,                   null,                                   false}
+                    {-1L,                   null,                                   IllegalArgumentException.class},
+                    {1L,                    Unpooled.wrappedBuffer(new byte[1])    ,null},
+                    {0L,                    null,                                   null}
 
             });
         }
 
-        public getLastEntryTest(long ledgerId, ByteBuf expRes, boolean expExc) {
+        public getLastEntryTest(long ledgerId, ByteBuf expRes, Class<? extends Exception>  expExc) {
             this.ledgerId = ledgerId;
             this.expectedResult = expRes;
             this.expectedException=expExc;
@@ -241,7 +251,7 @@ public class WriteCacheTests {
             try {
                 Assert.assertEquals(this.expectedResult, writeCache.getLastEntry(this.ledgerId));
             }catch(IllegalArgumentException e){
-                Assert.assertTrue(this.expectedException);
+                Assert.assertEquals(this.expectedException,e.getClass());
             }
         }
 
