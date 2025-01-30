@@ -103,6 +103,12 @@ public class WriteCacheTests {
             //faccio il setup della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
+            //FORCED SCENARIO: PIU INSERIMENTI PRIMA DI GET
+            writeCache.put(1,2,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,3,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,4,Unpooled.wrappedBuffer(new byte[1]));
+
+
         }
 
         @AfterClass
@@ -160,6 +166,10 @@ public class WriteCacheTests {
             //faccio il setup della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
+            //forced scenario
+            writeCache.put(1,2,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,3,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,4,Unpooled.wrappedBuffer(new byte[1]));
         }
 
         @AfterClass
@@ -216,6 +226,10 @@ public class WriteCacheTests {
             //faccio il setup della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
+            //forced scenario
+            writeCache.put(1,2,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,3,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,4,Unpooled.wrappedBuffer(new byte[1]));
         }
 
         @AfterClass
