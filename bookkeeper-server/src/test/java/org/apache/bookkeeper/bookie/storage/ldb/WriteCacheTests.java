@@ -257,4 +257,114 @@ public class WriteCacheTests {
 
     }
 
+    //WHITE BOX APPROACH
+    @RunWith(Parameterized.class)
+    public static class whiteboxPutTests{
+        private  ByteBuf entry;
+        private  boolean expRes;
+
+        private long ledgerId;
+        private long entryid;
+        @Before
+        public  void setupCache() {
+            //faccio il setup della cache prima di eseguire tutti i test
+            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE,  512);
+
+        }
+
+        @After
+        public  void clean() {
+            //faccio la pulizia della cache dopo aver eseguito tutti i test
+            writeCache.clear();
+            writeCache.close();
+        }
+
+        @Parameterized.Parameters
+        public static Collection<Object[][]> getParameters(){
+            return Arrays.asList(new Object[][]{
+                    //Unidimensional approach, I put in each test suite an invalid value
+                    //ENTRIES            SEGMENT_SIZE     LEDGER_ID         ENTRY_ID         ENTRY    EXPECTED_RESULT
+                    //lenght of the entry>segment_size
+                    {       0L,             0L,               Unpooled.wrappedBuffer(new byte[1000]),false },
+                    //lenght of the entry=segment_size
+                    {              0L,             1L,             Unpooled.wrappedBuffer(new byte[512]), true} ,
+                    //lenght of the entry<segment_size
+                    {          1L,                 0L,             Unpooled.wrappedBuffer(new byte[20]), true}
+
+
+            });
+        }
+
+        //constructor
+        public whiteboxPutTests( long ledgerId, long entryId, ByteBuf entry, boolean expectedRes){
+
+            this.ledgerId=ledgerId;
+            this.entryid=entryId;
+            this.entry=entry;
+            this.expRes=expectedRes;
+
+        }
+        @Test
+        public void whiteboxPutTests(){
+
+            if(expRes) {
+                Assert.assertTrue(writeCache.put(this.ledgerId, this.entryid, this.entry));
+            }else{
+                Assert.assertFalse(writeCache.put(this.ledgerId, this.entryid, this.entry));
+            }
+
+
+        }
+    }
+    @RunWith(Parameterized.class)
+    public static class whiteboxGetTests{
+        long ledgerId;
+        long entryId;
+        private Class<? extends Exception>  expException;
+        ByteBuf expectedResult;
+
+        @BeforeClass
+        public static void init(){
+            writeCache=new WriteCache(ByteBufAllocator.DEFAULT,CACHE_SIZE, 512);
+            writeCache.put(1L,1L, Unpooled.wrappedBuffer(new byte[1]));
+        }
+        @AfterClass
+        public static void clean(){
+            writeCache.clear();
+            writeCache.close();
+        }
+
+        @Parameterized.Parameters
+        public static Collection<Object[][]> getParams() {
+
+
+            return Arrays.asList(new Object[][]{
+                    //Unidimensional approach, I put in each test suite an invalid value
+                    //LEDGER_ID         ENTRY_ID            EXPECTED_EXCEPTION                      EXPECTED_RESULT
+                    {-1L,               1L,                 IllegalArgumentException.class,         null},
+                    {1L,                -1L,                IllegalArgumentException.class,                                   null},
+                    {1L,                1L,                 null,                                  Unpooled.wrappedBuffer(new byte[1])},
+                    {0L,                0L,                 null,                                 null},
+
+
+            });
+        }
+        //constructor
+        public whiteboxGetTests(long ledgerId, long entry,Class<? extends Exception>  expExc, ByteBuf expRes) {
+            this.ledgerId = ledgerId;
+            this.entryId = entry;
+            this.expectedResult = expRes;
+            this.expException = expExc;
+        }
+        @Test
+        public void whiteboxGetTest() {
+
+            try {
+                Assert.assertEquals(expectedResult, writeCache.get(this.ledgerId, this.entryId));
+            } catch (IllegalArgumentException e) {
+                Assert.assertEquals(this.expException,e.getClass());
+            }
+        }
+    }
+
 }
