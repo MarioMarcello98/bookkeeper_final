@@ -104,15 +104,12 @@ public class BufferedChannelTests {
 
                     //Unidimensional approach, I put in each test suite an invalid value
                     //BYTE_BUFFER                                            POSITION             LENGTH              EXPECTED_EXCEPTION
-                    //Il seguente test fallisce, lo commento per generare il report di Jacoco
 
                     {Unpooled.buffer(0), 0L, 0, false},
                     {Unpooled.buffer(WRITE_CAPACITY), 0L, WRITE_CAPACITY, false},
                     {Unpooled.buffer(WRITE_CAPACITY), 0L, WRITE_CAPACITY + 1, true},
                     {Unpooled.buffer(WRITE_CAPACITY), -1L, WRITE_CAPACITY, true},
                     {Unpooled.buffer(WRITE_CAPACITY), 1L, WRITE_CAPACITY - 1, false},
-                    //COMMENTO IL SEGUENTE TEST PER GEMERARE IL REPORT DI JACOCO IN QUANTO FALLISCE
-                    //  {Unpooled.buffer(WRITE_CAPACITY),                          0,                   WRITE_CAPACITY-1,              false},
 
 
             });
@@ -202,7 +199,7 @@ public class BufferedChannelTests {
 
                     //nei precedenti casi di test ho preso un buffer con la stessa dimensione di byteBuf, ora lo prendo sia più piccolo che più grande
 
-                    //READ_CAPACITY             BYTE_BUFFER                                         POS                     LENGHT                     EXPECTED_RESULT      EXPECTED_EXCEPTIO
+                    //READ_CAPACITY             BYTE_BUFFER                                         POS                     LENGHT                     EXPECTED_RESULT      EXPECTED_EXCEPTION
                     {false, Unpooled.buffer(WRITE_CAPACITY / 2), 0L, WRITE_CAPACITY, WRITE_CAPACITY, true},
 
                     {true, Unpooled.buffer(WRITE_CAPACITY / 2), 0L, WRITE_CAPACITY / 2, WRITE_CAPACITY / 2, true},
