@@ -525,7 +525,7 @@
             <configuration>
               <targetClasses>
                 <param>org.apache.bookkeeper.bookie.BufferedChannel</param>
-                <param>org.apache.bookkeeper.bookie.storage.ldb.WriteCacheTests</param>
+                <param>org.apache.bookkeeper.bookie.storage.ldb.WriteCache</param>
               </targetClasses>
 
               <avoidCallsTo>
