@@ -54,14 +54,14 @@ public class WriteCacheTests {
 
 
             return Arrays.asList(new Object[][]{
-                    //LEDGER_ID         ENTRY_ID       ENTRY                                                EXPECTED_EXCEPTION                                      EXPECTED_RESULT
-                    {-1L, 1L, Unpooled.wrappedBuffer(new byte[1]),                                          IllegalArgumentException.class,                       false},
-                    {1L, 1L, Unpooled.wrappedBuffer(new byte[2 * CACHE_SIZE]),                              null,                                                   false},
-                    {1L, -1L, Unpooled.wrappedBuffer(new byte[1]),                                          IllegalArgumentException.class,                       false},
-                    {1L, 1L, Unpooled.wrappedBuffer(new byte[1]),                                           null,                                                   true},
-                    {1L,1L,Unpooled.wrappedBuffer(new byte[CACHE_SIZE]),                                    null,                                                   true},
-                    {1L, 0L, Unpooled.wrappedBuffer(new byte[1]),                                           null,                                                   true},
-                    {0L, 1L, Unpooled.wrappedBuffer(new byte[1]),                                           null,                                                   true},
+                    //LEDGER_ID   ENTRY_ID  ENTRY  EXPECTED_EXCEPTION  EXPECTED_RESULT
+                    {-1L, 1L, Unpooled.wrappedBuffer(new byte[1]), IllegalArgumentException.class, false},
+                    {1L, 1L, Unpooled.wrappedBuffer(new byte[2 * CACHE_SIZE]), null, false},
+                    {1L, -1L, Unpooled.wrappedBuffer(new byte[1]), IllegalArgumentException.class, false},
+                    {1L, 1L, Unpooled.wrappedBuffer(new byte[1]), null, true},
+                    {1L,1L,Unpooled.wrappedBuffer(new byte[CACHE_SIZE]), null, true},
+                    {1L, 0L, Unpooled.wrappedBuffer(new byte[1]), null, true},
+                    {0L, 1L, Unpooled.wrappedBuffer(new byte[1]), null, true},
             });
         }
 
@@ -101,6 +101,9 @@ public class WriteCacheTests {
             //della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,2,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,3,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,4,Unpooled.wrappedBuffer(new byte[1]));
 
         }
 
@@ -119,7 +122,7 @@ public class WriteCacheTests {
 
                     //LEDGER_ID   ENTRY_ID   EXPECTED_EXCEPTION   EXPECTED_RESULT
                     {-1L, 1L, IllegalArgumentException.class, null},
-                    {1L, -1L, IllegalArgumentException.class,                                   null},
+                    {1L, -1L, IllegalArgumentException.class, null},
                     {1L, 1L, null, Unpooled.wrappedBuffer(new byte[1])},
                     {0L, 0L, null, null},
             });
@@ -157,6 +160,9 @@ public class WriteCacheTests {
             //setup della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,2,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,3,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,4,Unpooled.wrappedBuffer(new byte[1]));
 
         }
 
@@ -212,6 +218,9 @@ public class WriteCacheTests {
             //setup della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,2,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,3,Unpooled.wrappedBuffer(new byte[1]));
+            writeCache.put(1,4,Unpooled.wrappedBuffer(new byte[1]));
         }
 
         @AfterClass
