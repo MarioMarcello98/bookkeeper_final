@@ -48,8 +48,8 @@ public class BufferedChannelTests {
             byteBufferMock.readerIndex(WRITE_CAPACITY + 1);
 
             return Arrays.asList(new Object[][]{
-                    //Unidimensional approach, I put in each test suite an invalid value
-                    //BYTE BUFFER                                        EXPECTED_POSITION
+
+                    //BYTE BUFFER            EXPECTED_POSITION
                     {byteBufferMock, 0},
                     {Unpooled.wrappedBuffer(new byte[WRITE_CAPACITY]), WRITE_CAPACITY},
 
@@ -102,8 +102,8 @@ public class BufferedChannelTests {
 
             return Arrays.asList(new Object[][]{
 
-                    //Unidimensional approach, I put in each test suite an invalid value
-                    //BYTE_BUFFER                                            POSITION             LENGTH              EXPECTED_EXCEPTION
+
+                    //BYTE_BUFFER      POSITION       LENGTH     EXPECTED_EXCEPTION
 
                     {Unpooled.buffer(0), 0L, 0, false},
                     {Unpooled.buffer(WRITE_CAPACITY), 0L, WRITE_CAPACITY, false},
@@ -140,7 +140,6 @@ public class BufferedChannelTests {
         public readTest(ByteBuf b, long pos, int length, boolean e) throws IOException {
             //init the write buffer
 
-
             this.byteBuf = b;
 
             this.position = pos;
@@ -167,17 +166,11 @@ public class BufferedChannelTests {
                 Assert.assertTrue(this.expectedException);
 
             }
-
-
         }
-
     }
 
-
-    //TEST CON APPROCCIO WHITE BOX
     @RunWith(Parameterized.class)
     public static class whiteboxReadTest {
-
 
         private FileChannel fileChannel;
         private int length;
@@ -193,15 +186,13 @@ public class BufferedChannelTests {
         @Parameterized.Parameters
         public static Collection<Object[][]> getParameter() throws IOException {
 
-
             return Arrays.asList(new Object[][]{
 
 
-                    //nei precedenti casi di test ho preso un buffer con la stessa dimensione di byteBuf, ora lo prendo sia più piccolo che più grande
+                    //ora prendo buffer sia più piccoli che più grandi
 
-                    //READ_CAPACITY             BYTE_BUFFER                                         POS                     LENGHT                     EXPECTED_RESULT      EXPECTED_EXCEPTION
+                    //READ_CAPACITY     BYTE_BUFFER       POS       LENGHT      EXPECTED_RESULT      EXPECTED_EXCEPTION
                     {false, Unpooled.buffer(WRITE_CAPACITY / 2), 0L, WRITE_CAPACITY, WRITE_CAPACITY, true},
-
                     {true, Unpooled.buffer(WRITE_CAPACITY / 2), 0L, WRITE_CAPACITY / 2, WRITE_CAPACITY / 2, true},
                     {false, Unpooled.buffer(WRITE_CAPACITY / 2), 0L, WRITE_CAPACITY, 0, true},
                     {false, Unpooled.buffer(WRITE_CAPACITY * 2), 0L, WRITE_CAPACITY, WRITE_CAPACITY, false},
@@ -269,8 +260,6 @@ public class BufferedChannelTests {
                 Assert.assertTrue(this.expectedException);
 
             }
-
-
         }
     }
 
@@ -303,13 +292,11 @@ public class BufferedChannelTests {
 
 
             return Arrays.asList(new Object[][]{
-                    //Unidimensional approach
-                    // BYTE BUFFER                                     EXPECTED_UNPERSISTED_BYTES
-
-                    //visto che UnpersistedBytesBound=100, doRegularFlushes=true
-                    {      Unpooled.wrappedBuffer(new byte[99]),            new AtomicLong(99)},
-                    {   Unpooled.wrappedBuffer(new byte[100]),           new AtomicLong(0)},
-                    {     Unpooled.wrappedBuffer(new byte[300]),         new AtomicLong(0)}
+                    // BYTE BUFFER           EXPECTED_UNPERSISTED_BYTES
+                    //UnpersistedBytesBound=100
+                    {Unpooled.wrappedBuffer(new byte[99]),new AtomicLong(99)},
+                    {Unpooled.wrappedBuffer(new byte[100]),new AtomicLong(0)},
+                    {Unpooled.wrappedBuffer(new byte[300]),new AtomicLong(0)}
 
 
             });
@@ -325,7 +312,6 @@ public class BufferedChannelTests {
         @Test
         public void whiteboxWriteTest() {
 
-
             try {
                 buffChannel.write(this.byteBuf);
                 Assert.assertEquals(this.expectedUnpersistedBytes.get(), buffChannel.unpersistedBytes.get());
@@ -334,9 +320,5 @@ public class BufferedChannelTests {
             }
 
         }
-
-
     }
-
-
 }

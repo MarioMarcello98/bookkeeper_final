@@ -25,7 +25,6 @@ public class WriteCacheTests {
     private static final int CACHE_SIZE = 1024;
 
 
-
     @RunWith(Parameterized.class)
     public static class putTest {
 
@@ -39,13 +38,13 @@ public class WriteCacheTests {
 
         @Before
         public void setupCache() {
-            //faccio il setup della cache prima di eseguire tutti i test
+            //setup della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
         }
 
         @After
         public void clean() {
-            //faccio la pulizia della cache dopo aver eseguito tutti i test
+            //pulizia della cache dopo aver eseguito tutti i test
             writeCache.clear();
             writeCache.close();
         }
@@ -55,7 +54,6 @@ public class WriteCacheTests {
 
 
             return Arrays.asList(new Object[][]{
-                    //Unidimensional approach, I put in each test suite an invalid value
                     //LEDGER_ID         ENTRY_ID       ENTRY                                                EXPECTED_EXCEPTION                                      EXPECTED_RESULT
                     {-1L, 1L, Unpooled.wrappedBuffer(new byte[1]),                                          IllegalArgumentException.class,                       false},
                     {1L, 1L, Unpooled.wrappedBuffer(new byte[2 * CACHE_SIZE]),                              null,                                                   false},
@@ -100,20 +98,15 @@ public class WriteCacheTests {
 
         @BeforeClass
         public static void setupCache() {
-            //faccio il setup della cache prima di eseguire tutti i test
+            //della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
-            //FORCED SCENARIO: PIU INSERIMENTI PRIMA DI GET
-            writeCache.put(1,2,Unpooled.wrappedBuffer(new byte[1]));
-            writeCache.put(1,3,Unpooled.wrappedBuffer(new byte[1]));
-            writeCache.put(1,4,Unpooled.wrappedBuffer(new byte[1]));
-
 
         }
 
         @AfterClass
         public static void clean() {
-            //faccio la pulizia della cache dopo aver eseguito tutti i test
+            //pulizia della cache dopo aver eseguito tutti i test
             writeCache.clear();
             writeCache.close();
         }
@@ -123,14 +116,12 @@ public class WriteCacheTests {
 
 
             return Arrays.asList(new Object[][]{
-                    //Unidimensional approach, I put in each test suite an invalid value
-                    //LEDGER_ID         ENTRY_ID            EXPECTED_EXCEPTION                      EXPECTED_RESULT
-                    {-1L,               1L,                 IllegalArgumentException.class,         null},
-                    {1L,                -1L,                IllegalArgumentException.class,                                   null},
-                    {1L,                1L,                 null,                                  Unpooled.wrappedBuffer(new byte[1])},
-                    {0L,                0L,                 null,                                 null},
 
-
+                    //LEDGER_ID   ENTRY_ID   EXPECTED_EXCEPTION   EXPECTED_RESULT
+                    {-1L, 1L, IllegalArgumentException.class, null},
+                    {1L, -1L, IllegalArgumentException.class,                                   null},
+                    {1L, 1L, null, Unpooled.wrappedBuffer(new byte[1])},
+                    {0L, 0L, null, null},
             });
         }
 
@@ -163,13 +154,10 @@ public class WriteCacheTests {
 
         @BeforeClass
         public static void setupCache() {
-            //faccio il setup della cache prima di eseguire tutti i test
+            //setup della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
-            //forced scenario
-            writeCache.put(1,2,Unpooled.wrappedBuffer(new byte[1]));
-            writeCache.put(1,3,Unpooled.wrappedBuffer(new byte[1]));
-            writeCache.put(1,4,Unpooled.wrappedBuffer(new byte[1]));
+
         }
 
         @AfterClass
@@ -182,14 +170,12 @@ public class WriteCacheTests {
         @Parameterized.Parameters
         public static Collection<Object[][]> getParams() {
 
-
             return Arrays.asList(new Object[][]{
-                    //Unidimensional approach, I put in each test suite an invalid value
-                    //LEDGER_ID         ENTRY_ID                   EXPECTED_RESULT      EXPECTED_EXCEPTION
-                    {-1L,                1L,                       false,                IllegalArgumentException.class},
-                    {1L,                -1L,                       false,                IllegalArgumentException.class},
-                    {1L,                1L,                        true,                 null},
-                    {0L,                0L,                        false,                null}
+                    //LEDGER_ID  ENTRY_ID  EXPECTED_RESULT  EXPECTED_EXCEPTION
+                    {-1L, 1L, false, IllegalArgumentException.class},
+                    {1L, -1L, false, IllegalArgumentException.class},
+                    {1L, 1L, true, null},
+                    {0L, 0L, false, null}
 
             });
         }
@@ -223,18 +209,14 @@ public class WriteCacheTests {
 
         @BeforeClass
         public static void setupCache() {
-            //faccio il setup della cache prima di eseguire tutti i test
+            //setup della cache prima di eseguire tutti i test
             writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE);
             writeCache.put(1, 1, Unpooled.wrappedBuffer(new byte[1]));
-            //forced scenario
-            writeCache.put(1,2,Unpooled.wrappedBuffer(new byte[1]));
-            writeCache.put(1,3,Unpooled.wrappedBuffer(new byte[1]));
-            writeCache.put(1,4,Unpooled.wrappedBuffer(new byte[1]));
         }
 
         @AfterClass
         public static void clean() {
-            //faccio la pulizia della cache dopo aver eseguito tutti i test
+            //pulizia della cache dopo aver eseguito tutti i test
             writeCache.clear();
             writeCache.close();
         }
@@ -242,13 +224,11 @@ public class WriteCacheTests {
         @Parameterized.Parameters
         public static Collection<Object[][]> getParams() {
 
-
             return Arrays.asList(new Object[][]{
-                    //Unidimensional approach, I put in each test suite an invalid value
-                    //LEDGER_ID             EXPECTED_RESULT                         EXPECTED_EXCEPTION
-                    {-1L,                   null,                                   IllegalArgumentException.class},
-                    {1L,                    Unpooled.wrappedBuffer(new byte[1])    ,null},
-                    {0L,                    null,                                   null}
+                    //LEDGER_ID EXPECTED_RESULT    EXPECTED_EXCEPTION
+                    {-1L, null, IllegalArgumentException.class},
+                    {1L, Unpooled.wrappedBuffer(new byte[1]),null},
+                    {0L, null, null}
 
             });
         }
@@ -271,7 +251,6 @@ public class WriteCacheTests {
 
     }
 
-    //WHITE BOX APPROACH
     @RunWith(Parameterized.class)
     public static class whiteboxPutTests{
         private  ByteBuf entry;
@@ -281,14 +260,14 @@ public class WriteCacheTests {
         private long entryid;
         @Before
         public  void setupCache() {
-            //faccio il setup della cache prima di eseguire tutti i test
-            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE,  512);
+            //setup della cache prima di eseguire tutti i test
+            writeCache = new WriteCache(ByteBufAllocator.DEFAULT, CACHE_SIZE,512);
 
         }
 
         @After
         public  void clean() {
-            //faccio la pulizia della cache dopo aver eseguito tutti i test
+            //pulizia della cache dopo aver eseguito tutti i test
             writeCache.clear();
             writeCache.close();
         }
@@ -296,16 +275,11 @@ public class WriteCacheTests {
         @Parameterized.Parameters
         public static Collection<Object[][]> getParameters(){
             return Arrays.asList(new Object[][]{
-                    //Unidimensional approach, I put in each test suite an invalid value
-                    //ENTRIES            SEGMENT_SIZE     LEDGER_ID         ENTRY_ID         ENTRY    EXPECTED_RESULT
-                    //lenght of the entry>segment_size
-                    {       0L,             0L,               Unpooled.wrappedBuffer(new byte[1000]),false },
-                    //lenght of the entry=segment_size
-                    {              0L,             1L,             Unpooled.wrappedBuffer(new byte[512]), true} ,
-                    //lenght of the entry<segment_size
-                    {          1L,                 0L,             Unpooled.wrappedBuffer(new byte[20]), true}
-
-
+                    //segment_size = 512
+                    //LEDGER_ID  ENTRY_ID  ENTRY EXPECTED_RESULT
+                    {0L, 0L, Unpooled.wrappedBuffer(new byte[1000]),false },
+                    {0L, 1L, Unpooled.wrappedBuffer(new byte[512]), true},
+                    {1L, 0L, Unpooled.wrappedBuffer(new byte[20]), true}
             });
         }
 
@@ -353,12 +327,11 @@ public class WriteCacheTests {
 
 
             return Arrays.asList(new Object[][]{
-                    //Unidimensional approach, I put in each test suite an invalid value
-                    //LEDGER_ID         ENTRY_ID            EXPECTED_EXCEPTION                      EXPECTED_RESULT
-                    {-1L,               1L,                 IllegalArgumentException.class,         null},
-                    {1L,                -1L,                IllegalArgumentException.class,                                   null},
-                    {1L,                1L,                 null,                                  Unpooled.wrappedBuffer(new byte[1])},
-                    {0L,                0L,                 null,                                 null},
+                    //LEDGER_ID  ENTRY_ID  EXPECTED_EXCEPTION  EXPECTED_RESULT
+                    {-1L,1L,IllegalArgumentException.class,null},
+                    {1L,-1L,IllegalArgumentException.class,null},
+                    {1L,1L,null,Unpooled.wrappedBuffer(new byte[1])},
+                    {0L,0L,null,null},
 
 
             });
